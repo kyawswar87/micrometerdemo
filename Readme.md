@@ -47,3 +47,23 @@ There are three metric is generated for timer metric.
 There are other useful metrics. You can see by using http://localhost:8080/actuator/prometheus endpoint.
 
 We can find by using those metric name in Grafana http://localhost:3000 or Prometheus http://localhost:9090 Dashboard.# micrometerdemo
+
+## Micrometer with Spring AOP
+
+I upgraded micrometer with spring AOP.
+
+Every method with this annotation `@MetricAspectAnnotation` will intercept by spring AOP.
+
+I removed HTTP method tags from controller method metric because Spring Actuator already listen those method as follows.
+```dtd
+# HELP http_server_requests_seconds
+# TYPE http_server_requests_seconds summary
+http_server_requests_seconds_count{application="spring-boot-metrics",error="none",exception="none",method="GET",outcome="SUCCESS",status="200",uri="/actuator/prometheus",} 1.0
+http_server_requests_seconds_sum{application="spring-boot-metrics",error="none",exception="none",method="GET",outcome="SUCCESS",status="200",uri="/actuator/prometheus",} 0.119050624
+http_server_requests_seconds_count{application="spring-boot-metrics",error="none",exception="none",method="GET",outcome="SUCCESS",status="200",uri="/api/book/",} 1.0
+http_server_requests_seconds_sum{application="spring-boot-metrics",error="none",exception="none",method="GET",outcome="SUCCESS",status="200",uri="/api/book/",} 0.305244145
+# HELP http_server_requests_seconds_max
+# TYPE http_server_requests_seconds_max gauge
+http_server_requests_seconds_max{application="spring-boot-metrics",error="none",exception="none",method="GET",outcome="SUCCESS",status="200",uri="/actuator/prometheus",} 0.119050624
+http_server_requests_seconds_max{application="spring-boot-metrics",error="none",exception="none",method="GET",outcome="SUCCESS",status="200",uri="/api/book/",} 0.305244145
+```
