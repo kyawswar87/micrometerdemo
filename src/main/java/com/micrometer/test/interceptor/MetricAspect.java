@@ -46,7 +46,7 @@ public class MetricAspect {
         restfulMethodErrorCounterBuilder = getCounterBuilder(HTTP_METHOD_ERROR_COUNTER);
     }
 
-    @Around("@annotation(LogExecutionTime)")
+    @Around("@annotation(MetricAspectAnnotation)")
     public Object processTimer(ProceedingJoinPoint joinPoint) throws Throwable {
         System.out.println("Method args values:");
         Arrays.stream(joinPoint.getArgs()).forEach(o -> log.info("arg value: {}", o.toString()));
@@ -74,7 +74,7 @@ public class MetricAspect {
         return retVal;
     }
 
-    @Before("@annotation(LogExecutionTime)")
+    @Before("@annotation(MetricAspectAnnotation)")
     public void counter(JoinPoint joinPoint) {
         Arrays.stream(joinPoint.getArgs()).forEach(o -> log.info("arg value: {}", o.toString()));
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -83,7 +83,7 @@ public class MetricAspect {
                 .register(meterRegistry).increment();
     }
 
-    @AfterThrowing(value = "@annotation(LogExecutionTime)", throwing = "ex")
+    @AfterThrowing(value = "@annotation(MetricAspectAnnotation)", throwing = "ex")
     public void catchException(Exception ex) {
         restfulMethodErrorCounterBuilder
                 .tag("method", ex.toString())
